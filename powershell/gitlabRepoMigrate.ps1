@@ -52,7 +52,7 @@ function GetOrCreateGroup {
     }
 
     # check if group name space exist
-    $(Invoke-RestMethod -Uri "$toServerUrl/api/v4/groups?search=$groupNameSpace&private_token=$global:private_token" -Method GET) |
+    $(Invoke-RestMethod -Uri "$global:toServerUrl/api/v4/groups?search=$groupNameSpace&private_token=$global:private_token" -Method GET) |
     ForEach {
         if ($_.full_path -eq $groupNameSpace) {
             Write-Host "Found "$_.full_path", id="$_.id
@@ -80,7 +80,7 @@ function GetOrCreateGroup {
 
         if ([string]::IsNullOrEmpty($groupId)) {
             Write-Host "Creating group $groupNameSpace"
-            $groupId = $(Invoke-RestMethod -Uri "$toServerUrl/api/v4/groups?private_token=$global:private_token" -Method POST -Body $body).id
+            $groupId = $(Invoke-RestMethod -Uri "$global:toServerUrl/api/v4/groups?private_token=$global:private_token" -Method POST -Body $body).id
         }
     }
     return $groupId
@@ -106,10 +106,10 @@ function GetOrCreateProject {
     }
 
     $projectNamespace = $(Join-Path -Path $group -ChildPath $projectPathBase).Replace("\", "/")
-    $projectId = $(Invoke-RestMethod -Uri "$toServerUrl/api/v4/projects?search=$projectNamespace&search_namespaces=true&private_token=$global:private_token" -Method GET).id
+    $projectId = $(Invoke-RestMethod -Uri "$global:toServerUrl/api/v4/projects?search=$projectNamespace&search_namespaces=true&private_token=$global:private_token" -Method GET).id
 
     if ([string]::IsNullOrEmpty($projectId)) {
-        Invoke-RestMethod -Uri "$toServerUrl/api/v4/projects?private_token=$global:private_token" -Method POST -Body @{
+        Invoke-RestMethod -Uri "$global:toServerUrl/api/v4/projects?private_token=$global:private_token" -Method POST -Body @{
             path = $projectPathBase
             namespace_id = [int]$groupId
         }
@@ -124,9 +124,7 @@ function MigrateRepo {
     param (
         $RepoName,
         $fromPath,
-        $toPath,
-        $fromServerUrl,
-        $toServerUrl
+        $toPath
     )
     
     $item = "" | Select-Object RepoName,fromPath,toPath

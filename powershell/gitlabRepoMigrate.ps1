@@ -52,7 +52,7 @@ function GetOrCreateGroup {
     }
 
     # check if group name space exist
-    $(Invoke-RestMethod -Uri "$global:toServerUrl/api/v4/groups?search=$groupNameSpace&private_token=$global:private_token" -Method GET) |
+    $(Invoke-RestMethod -Uri "$global:toServerUrl/api/v4/namespaces?search=$groupNameSpace&private_token=$global:private_token" -Method GET) |
     ForEach {
         if ($_.full_path -eq $groupNameSpace) {
             Write-Host "Found "$_.full_path", id="$_.id
